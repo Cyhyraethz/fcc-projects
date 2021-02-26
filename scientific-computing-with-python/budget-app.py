@@ -30,6 +30,16 @@ class Category:
       return False
     else:
       return True
+  def __str__(self):
+    output = ''
+    length = int(((30 - len(self.category)) / 2))
+    title = '*' * length + self.category + '*' * length
+    if len(title) < 30:
+      title += '*'
+    output += title
+    for entry in self.ledger:
+      output += '\n' + entry['description'][:23] + ' ' * (7 - len(str(entry['amount'])[:7])) + str(entry['amount'])
+    return output
 
 
 
@@ -42,7 +52,7 @@ food = Category("Food")
 food.deposit(1000, "initial deposit")
 food.withdraw(10.15, "groceries")
 food.withdraw(15.89, "restaurant and more food for dessert")
-print(food.get_balance())
+# print(food.get_balance())
 clothing = Category("Clothing")
 food.transfer(50, clothing)
 clothing.withdraw(25.55) #####
@@ -50,3 +60,6 @@ clothing.withdraw(100)
 auto = Category("Auto")
 auto.deposit(1000, "initial deposit")
 auto.withdraw(15)
+
+foods = Category('Foods')
+print(foods)

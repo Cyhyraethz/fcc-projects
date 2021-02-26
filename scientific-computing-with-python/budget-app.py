@@ -18,10 +18,10 @@ class Category:
       return False
   def get_balance(self):
     return self.balance
-  def transfer(self, amount, category):
+  def transfer(self, amount, name):
     if self.check_funds(amount):
       for instance in instances:
-        if instance.category == category:
+        if instance.category == name.category:
           self.withdraw(amount, f'Transfer to {instance.category}')
           instance.deposit(amount, f'Transfer from {self.category}')
           return True
@@ -31,6 +31,16 @@ class Category:
     else:
       return True
   def __str__(self):
+    def add_decimals(string):
+      if '.' not in string:
+        string += '.00'
+      else:
+        index = string.index('.')
+        decimals = len(string[index + 1:])
+        if decimals < 2:
+          string += '0'
+      return string
+    total = 0
     output = ''
     length = int(((30 - len(self.category)) / 2))
     title = '*' * length + self.category + '*' * length
@@ -38,7 +48,12 @@ class Category:
       title += '*'
     output += title
     for entry in self.ledger:
-      output += '\n' + entry['description'][:23] + ' ' * (7 - len(str(entry['amount'])[:7])) + str(entry['amount'])
+      amount_string = add_decimals(str(entry['amount']))
+      spaces = 30 - len(entry['description'][:23]) - len(amount_string)
+      output += '\n' + entry['description'][:23] + ' ' * spaces + amount_string
+      total += entry['amount']
+    total_string = add_decimals(str(total))
+    output += '\n' + 'Total: ' + total_string
     return output
 
 
@@ -55,11 +70,10 @@ food.withdraw(15.89, "restaurant and more food for dessert")
 # print(food.get_balance())
 clothing = Category("Clothing")
 food.transfer(50, clothing)
-clothing.withdraw(25.55) #####
+clothing.withdraw(25.55)
 clothing.withdraw(100)
 auto = Category("Auto")
 auto.deposit(1000, "initial deposit")
 auto.withdraw(15)
 
-foods = Category('Foods')
-print(foods)
+print(food)

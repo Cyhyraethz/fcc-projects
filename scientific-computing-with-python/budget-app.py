@@ -58,9 +58,53 @@ class Category:
 
 
 
-# def create_spend_chart(categories):
-#   print(categories)
-
+def create_spend_chart(categories):
+  spent = dict()
+  total_spent = 0
+  percentages = dict()
+  for category in categories:
+    if category.category not in spent:
+      spent[category.category] = 0
+    for entry in category.ledger:
+      if entry['amount'] < 0:
+        spent[category.category] -= entry['amount']
+        total_spent -= entry['amount']
+        spent[category.category] = round(spent[category.category], 2)
+        total_spent = round(total_spent, 2)
+  for category in categories:
+    percentages[category.category] = int(spent[category.category] / total_spent * 10) * 10
+  chart = 'percentages spent by category\n'
+  percent = 100
+  while percent >= 0:
+    next_line = f'{percent}| '
+    chart += ' ' * (5 - len(next_line)) + next_line
+    for percentage in percentages:
+      if percentages.get(percentage) >= percent:
+        chart += 'o  '
+    percent -= 10
+    chart += '\n'
+  example_chart = '''Percentage spent by category
+100|
+ 90|
+ 80|
+ 70|
+ 60| o
+ 50| o
+ 40| o
+ 30| o
+ 20| o  o
+ 10| o  o  o
+  0| o  o  o
+    ----------
+     F  C  A
+     o  l  u
+     o  o  t
+     d  t  o
+        h
+        i
+        n
+        g'''
+  return chart
 
 
 food = Category("Food")
@@ -76,4 +120,4 @@ auto = Category("Auto")
 auto.deposit(1000, "initial deposit")
 auto.withdraw(15)
 
-print(food)
+print(create_spend_chart([food, clothing, auto]))

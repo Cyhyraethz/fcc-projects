@@ -23,8 +23,10 @@ class Category:
       for instance in instances:
         if instance.category == name.category:
           self.withdraw(amount, f'Transfer to {instance.category}')
-          instance.deposit(amount, f'Transfer from {self.category}')
+          name.deposit(amount, f'Transfer from {self.category}')
           return True
+    else:
+      return False
   def check_funds(self, amount):
     if amount > self.balance:
       return False
@@ -73,7 +75,7 @@ def create_spend_chart(categories):
         total_spent = round(total_spent, 2)
   for category in categories:
     percentages[category.category] = int(spent[category.category] / total_spent * 10) * 10
-  chart = 'percentages spent by category\n'
+  chart = 'Percentage spent by category\n'
   percent = 100
   while percent >= 0:
     next_line = f'{percent}| '
@@ -81,47 +83,22 @@ def create_spend_chart(categories):
     for percentage in percentages:
       if percentages.get(percentage) >= percent:
         chart += 'o  '
+      else:
+        chart += '   '
     if percent > 0:
       chart += '\n'
     percent -= 10
-  if len(percentages) > 0:
-    chart += '\n    -'
-  chart += '-' * (len(percentages) * 3)
-  example_chart = '''Percentage spent by category
-100|
- 90|
- 80|
- 70|
- 60| o
- 50| o
- 40| o
- 30| o
- 20| o  o
- 10| o  o  o
-  0| o  o  o
-    ----------
-     F  C  A
-     o  l  u
-     o  o  t
-     d  t  o
-        h
-        i
-        n
-        g'''
+  if len(categories) > 0:
+    chart += '\n    -' + '-' * (len(percentages) * 3)
+    length = 0
+    for category in categories:
+      if len(category.category) > length:
+        length = len(category.category)
+    for i in range(length):
+      chart += '\n     '
+      for category in categories:
+        try:
+          chart += f'{category.category[i]}  '
+        except:
+          chart += '   '
   return chart
-
-
-food = Category("Food")
-food.deposit(1000, "initial deposit")
-food.withdraw(10.15, "groceries")
-food.withdraw(15.89, "restaurant and more food for dessert")
-# print(food.get_balance())
-clothing = Category("Clothing")
-food.transfer(50, clothing)
-clothing.withdraw(25.55)
-clothing.withdraw(100)
-auto = Category("Auto")
-auto.deposit(1000, "initial deposit")
-auto.withdraw(15)
-
-print(create_spend_chart([food, clothing, auto]))

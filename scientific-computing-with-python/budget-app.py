@@ -1,11 +1,8 @@
-instances = list()
-
 class Category:
   def __init__(self, category):
     self.category = category
     self.ledger = list()
     self.balance = 0
-    instances.append(self)
   def deposit(self, amount, description=''):
     self.ledger.append({'amount': amount, 'description': description})
     self.balance += amount
@@ -20,11 +17,9 @@ class Category:
     return self.balance
   def transfer(self, amount, name):
     if self.check_funds(amount):
-      for instance in instances:
-        if instance.category == name.category:
-          self.withdraw(amount, f'Transfer to {instance.category}')
-          name.deposit(amount, f'Transfer from {self.category}')
-          return True
+      self.withdraw(amount, f'Transfer to {name.category}')
+      name.deposit(amount, f'Transfer from {self.category}')
+      return True
     else:
       return False
   def check_funds(self, amount):
